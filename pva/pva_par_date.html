@@ -18,9 +18,9 @@ body {
   stroke-width: 2px;
 }
 
-.RdYlGn .q0-11{fill:rgb(225,225,255)}
-.RdYlGn .q1-11{fill:rgb(215,215,255)}
-.RdYlGn .q2-11{fill:rgb(200,200,255)}
+.RdYlGn .q0-11{fill:rgb(220,220,255)}
+.RdYlGn .q1-11{fill:rgb(200,200,255)}
+.RdYlGn .q2-11{fill:rgb(190,190,255)}
 .RdYlGn .q3-11{fill:rgb(175,175,255)}
 .RdYlGn .q4-11{fill:rgb(150,150,255)}
 .RdYlGn .q5-11{fill:rgb(125,125,255)}
@@ -47,7 +47,7 @@ var percent = d3.format(".1%"),
     format = d3.time.format("%Y-%m-%d");
 
 var color = d3.scale.quantize()
-    .domain([0, 1000])
+    .domain([0, 5000])
     .range(d3.range(11).map(function(d) { return "q" + d + "-11"; }));
 
 var svg = d3.select("body").selectAll("svg")
@@ -112,6 +112,5 @@ function monthPath(t0) {
 <p>
 <a href="pva_par_date.csv">Téléchargez le fichier CSV (104Ko)</a>
 </p>
-<small>Datavisualisation réalisée par cquest avec <a href="https://d3js.org/">d3.js</a></small>
+<small>Datavisualisation réalisée par cquest avec <a href="https://d3js.org/">d3.js</a> à partir de données extraites du <a href="http://geoportail.gouv.fr">géoportail</a>.</small>
 </body>
-
