@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+    <title>3 millions de photos aériennes en 90 ans</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="leaflet-heat.js"></script>
+
+    <style>
+        #map { width: 1000px; height: 800px; }
+        body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
+        a { color: #0077ff; }
+    </style>
+</head>
+<body>
+
+<p>
+    Carte de chaleur des 3 millions de <a href="https://github.com/cquest/photos-aeriennes-ign">photos aériennes de l'IGN</a>.
+</p>
+
+<div id="map"></div>
+
+
+<script src="heatmap.js"></script>
+
+<script>
+var map = L.map('map').setView([46, 2], 6);
+var tiles = L.tileLayer('http://tilecache.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+    attribution: 'map data &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors / tiles &copy; OSM-FR',
+}).addTo(map);
+var heatmap = L.heatLayer(heat, {radius: 15}).addTo(map);
+</script>
+</body>
+</html>
+
