@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+  shape-rendering: crispEdges;
+}
+
+.day {
+  fill: #fff;
+  stroke: #ccc;
+}
+
+.month {
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+.RdYlGn .q0-11{fill:rgb(225,225,255)}
+.RdYlGn .q1-11{fill:rgb(215,215,255)}
+.RdYlGn .q2-11{fill:rgb(200,200,255)}
+.RdYlGn .q3-11{fill:rgb(175,175,255)}
+.RdYlGn .q4-11{fill:rgb(150,150,255)}
+.RdYlGn .q5-11{fill:rgb(125,125,255)}
+.RdYlGn .q6-11{fill:rgb(100,100,255)}
+.RdYlGn .q7-11{fill:rgb(75,75,255)}
+.RdYlGn .q8-11{fill:rgb(50,50,255)}
+.RdYlGn .q9-11{fill:rgb(25,25,255)}
+.RdYlGn .q10-11{fill:rgb(0,0,255)}
+
+</style>
+<head><title>Prises de vues aériennes IGN de 1919 à 2010</title></head>
+<body>
+<h1>Prises de vues aériennes IGN jour après jour de 1919 à 2010</h1>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script>
+
+var width = 960,
+    height = 120,
+    cellSize = 16; // cell size
+
+var percent = d3.format(".1%"),
+    format = d3.time.format("%Y-%m-%d");
+
+var color = d3.scale.quantize()
+    .domain([0, 1000])
+    .range(d3.range(11).map(function(d) { return "q" + d + "-11"; }));
+
+var svg = d3.select("body").selectAll("svg")
+    .data(d3.range(1919, 2011))
+  .enter().append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("class", "RdYlGn")
+  .append("g")
+    .attr("transform", "translate(" + ((width - cellSize * 53) / 2) + "," + (height - cellSize * 7 - 1) + ")");
+
+svg.append("text")
+    .attr("transform", "translate(-6," + cellSize * 3.5 + ")rotate(-90)")
+    .style("text-anchor", "middle")
+    .text(function(d) { return d; });
+
+var rect = svg.selectAll(".day")
+    .data(function(d) { return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
+  .enter().append("rect")
+    .attr("class", "day")
+    .attr("width", cellSize)
+    .attr("height", cellSize)
+    .attr("x", function(d) { return d3.time.weekOfYear(d) * cellSize; })
+    .attr("y", function(d) { return d.getDay() * cellSize; })
+    .datum(format);
+
+rect.append("title")
+    .text(function(d) { return d; });
+
+svg.selectAll(".month")
+    .data(function(d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
+  .enter().append("path")
+    .attr("class", "month")
+    .attr("d", monthPath);
+
+d3.csv("pva_par_date.csv", function(error, csv) {
+  if (error) throw error;
+
+  var data = d3.nest()
+    .key(function(d) { return d.date; })
+    .rollup(function(d) { return d[0].nb; })
+    .map(csv);
+
+  rect.filter(function(d) { return d in data; })
+      .attr("class", function(d) { return "day " + color(data[d]); })
+    .select("title")
+      .text(function(d) { return d + ": " + data[d] + " photos"; });
+});
+
+function monthPath(t0) {
+  var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
+      d0 = t0.getDay(), w0 = d3.time.weekOfYear(t0),
+      d1 = t1.getDay(), w1 = d3.time.weekOfYear(t1);
+  return "M" + (w0 + 1) * cellSize + "," + d0 * cellSize
+      + "H" + w0 * cellSize + "V" + 7 * cellSize
+      + "H" + w1 * cellSize + "V" + (d1 + 1) * cellSize
+      + "H" + (w1 + 1) * cellSize + "V" + 0
+      + "H" + (w0 + 1) * cellSize + "Z";
+}
+
+</script>
+<p>
+<a href="pva_par_date.csv">Téléchargez le fichier CSV (104Ko)</a>
+</p>
+<small>Datavisualisation réalisée par cquest avec <a href="https://d3js.org/">d3.js</a></small>
+</body>
+
